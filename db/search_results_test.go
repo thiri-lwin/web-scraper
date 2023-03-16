@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -57,4 +58,17 @@ func TestGetSearchResultsByUserID(t *testing.T) {
 	require.NotEmpty(t, searchResults)
 
 	require.NotZero(t, len(searchResults))
+}
+
+func TestGetSearchResultByIDAndUserID(t *testing.T) {
+	searchResult1 := createRandomSearchResult(t)
+	searchResult2, err := testDB.GetSearchResultByIDAndUserID(context.Background(), searchResult1.ID, searchResult1.UserID)
+	require.NoError(t, err)
+	require.NotEmpty(t, searchResult2)
+
+	require.NotEmpty(t, searchResult2.ID)
+	require.Equal(t, searchResult1.Keyword, searchResult2.Keyword)
+	require.Equal(t, searchResult1.UserID, searchResult2.UserID)
+	require.NotZero(t, searchResult2.Results)
+	require.WithinDuration(t, searchResult1.CreatedAt, searchResult2.CreatedAt, time.Second)
 }

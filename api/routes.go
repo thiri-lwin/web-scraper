@@ -30,5 +30,8 @@ func (server *Server) privateRoutes(g *gin.RouterGroup) {
 	g.GET("/upload", server.uploadGetHandler)
 	g.POST("/upload", server.uploadKeywords)
 	g.GET("/keywords", server.getKeywords)
+	g.GET("/keywords/:id", server.getSearchResultByID)
+
 	g.GET("/logout", server.logoutHandler)
+
 }

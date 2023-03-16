@@ -1,0 +1,36 @@
+$body-background-color: #f7f7f7;
+$body-font-family: Arial, sans-serif;
+$h1-color: #007bff;
+$h1-text-align: center;
+$h1-margin-top: 50px;
+$h1-margin-bottom: 50px;
+$container-background-color: white;
+$container-padding: 20px;
+$container-border-radius: 10px;
+$container-box-shadow: 0px 0px 10px #999;
+$scrollable-max-height: 200px;
+$scrollable-overflow-y: auto;
+
+body {
+background-color: $body-background-color;
+font-family: $body-font-family;
+}
+
+h1 {
+color: $h1-color;
+text-align: $h1-text-align;
+margin-top: $h1-margin-top;
+margin-bottom: $h1-margin-bottom;
+}
+
+.container {
+background-color: $container-background-color;
+padding: $container-padding;
+border-radius: $container-border-radius;
+box-shadow: $container-box-shadow;
+}
+
+.scrollable {
+max-height: $scrollable-max-height;
+overflow-y: $scrollable-overflow-y;
+}

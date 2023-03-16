@@ -16,5 +16,24 @@
   });
 </script>
 {{end}}
+
+{{if .result_page}}
+<script>
+  function goBack() {
+    window.history.back();
+  }
+
+  function copyText() {
+    var copyText = document.getElementById("htmlCode");
+    var textArea = document.createElement("textarea");
+    textArea.value = copyText.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+    textArea.remove();
+    alert("Copied HTML Code to clipboard!");
+  }
+</script>
+{{end}}
 </body>
 </html>

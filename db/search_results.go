@@ -46,3 +46,16 @@ func (s *Store) GetSearchResultsByUserID(ctx context.Context, userID int) ([]Sea
 	}
 	return data, nil
 }
+
+func (s *Store) GetSearchResultByIDAndUserID(ctx context.Context, id, userID int) (SearchResult, error) {
+	data := make([]SearchResult, 0)
+	if err := s.db.Select(&data, `
+	SELECT * from search_results
+	WHERE id = $1 and user_id = $2 LIMIT 1`, id, userID); err != nil {
+		return SearchResult{}, err
+	}
+	if len(data) > 0 {
+		return data[0], nil
+	}
+	return SearchResult{}, nil
+}

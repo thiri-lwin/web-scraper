@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -213,4 +214,49 @@ func searchKeyword(c *colly.Collector, keyword string, resultCh chan SearchInfo)
 	// Visit the first search result page
 	c.Visit(fmt.Sprintf("https://www.google.com/search?q=%s&start=%d", keyword, 0))
 	resultCh <- results
+}
+
+func (server *Server) getSearchResultByID(ctx *gin.Context) {
+	userEmail, err := ctx.Cookie(util.Userkey)
+	if err != nil {
+		log.Println("failed to get cookie:", err)
+		renderHTML(ctx, gin.H{"title": "Sign In"}, "index.html", http.StatusOK)
+		return
+	}
+	dbUser, err := server.store.GetUser(ctx, fmt.Sprint(userEmail))
+	if err != nil {
+		log.Println("Failed to get user info from db:", err)
+		renderHTML(ctx, gin.H{"title": "Sign In"}, "index.html", http.StatusInternalServerError)
+		return
+	}
+	if dbUser.ID == 0 {
+		renderHTML(ctx, gin.H{"title": "Sign In"}, "index.html", http.StatusNotFound)
+		return
+	}
+
+	id := ctx.Param("id")
+	// id := ctx.Query("id")
+	keywordID, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("Invalid id", err)
+		return
+	}
+	searchResult, err := server.store.GetSearchResultByIDAndUserID(ctx, keywordID, dbUser.ID)
+	if err != nil {
+		log.Println("Failed to get search result by id:", err)
+		renderHTML(ctx, gin.H{"title": "Keyword List", "username": fmt.Sprintf("%s %s", dbUser.FirstName, dbUser.LastName), "keyword_page": true}, "view_keywords.html", http.StatusInternalServerError)
+		return
+	}
+
+	res := SearchInfo{}
+	err = json.Unmarshal([]byte(searchResult.Results), &res)
+	if err != nil {
+		fmt.Println("Failed to unmarshal", err)
+		return
+	}
+	res.Keyword = searchResult.Keyword
+	// fmt.Println("res <<<<<<<<", res.NumLinks)
+
+	renderHTML(ctx, gin.H{"title": "Result Information", "username": fmt.Sprintf("%s %s", dbUser.FirstName, dbUser.LastName), "payload": res, "result_page": true}, "details.html", http.StatusOK)
+
 }
