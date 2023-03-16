@@ -1,22 +1,6 @@
 package api
 
-import (
-	"github.com/gin-gonic/gin"
-)
-
-type SearchInfo struct {
-	Keyword            string
-	HTMLCode           string
-	NumAds             int32
-	NumLinks           int32
-	TotalSearchResults string
-}
-type resultDB struct {
-	HTMLCode           string
-	NumAds             int32
-	NumLinks           int32
-	TotalSearchResults string
-}
+import "github.com/gin-gonic/gin"
 
 func (server *Server) publicRoutes(g *gin.RouterGroup) {
 	g.GET("/", server.initPage)
@@ -33,5 +17,4 @@ func (server *Server) privateRoutes(g *gin.RouterGroup) {
 	g.GET("/keywords/:id", server.getSearchResultByID)
 
 	g.GET("/logout", server.logoutHandler)
-
 }

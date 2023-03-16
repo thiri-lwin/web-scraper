@@ -1,3 +1,6 @@
+createdb:
+	docker exec -it postgresdb createdb --username=postgres --owner=postgres web_scraper
+	
 migrateup:
 	migrate -path db/migration -database "postgresql://postgres:postgres@localhost:5432/web_scraper?sslmode=disable" -verbose up
 
@@ -10,4 +13,7 @@ test:
 server:
 	go run main.go
 
-.PHONY: createdb migrateup migratedown test server
+serverdocker:
+	docker-compose build && docker-compose up
+
+.PHONY: createdb migrateup migratedown test server serverdocker
