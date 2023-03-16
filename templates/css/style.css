@@ -1,0 +1,76 @@
+:root {
+  --primary-color: #007bff;
+}
+
+.form-control {
+  border-color: var(--primary-color);
+  color: #495057;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.btn-primary:hover {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+.btn-primary:focus, .btn-primary.focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+}
+
+a.text-primary {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+a.text-primary:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+  .navbar-nav {
+    flex-direction: column;
+  }
+  .nav-link {
+    margin-bottom: 0.5rem;
+  }
+  .dropdown-toggle::after {
+    display: none;
+  }
+  .dropdown-menu {
+    position: static !important;
+    display: none;
+    overflow: visible !important;
+    float: none !important;
+    width: auto !important;
+    margin-top: 0.5rem;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .dropdown-menu.show {
+    display: block;
+  }
+  .dropdown-menu .dropdown-item {
+    color: #fff;
+  }
+  .rounded-circle {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+.error-msg {
+  text-align: center;
+  color: red;
+}
+
+/*# sourceMappingURL=style.css.map */

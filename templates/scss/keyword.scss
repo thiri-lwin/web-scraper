@@ -1,0 +1,39 @@
+$body-bg-color: #f7f7f7;
+$font-family: Arial, sans-serif;
+$table-responsive-max-height: 500px;
+$table-responsive-overflow: auto;
+$search-form-margin-bottom: 20px;
+$search-input-width: 300px;
+$search-button-width: 80px;
+$btn-sort-cursor: pointer;
+$btn-sort-hover-color: #007bff;
+
+body {
+  background-color: $body-bg-color;
+  font-family: $font-family;
+}
+
+.table-responsive {
+  max-height: $table-responsive-max-height;
+  overflow-y: $table-responsive-overflow;
+}
+
+.search-form {
+  margin-bottom: $search-form-margin-bottom;
+}
+
+.search-input {
+  width: $search-input-width;
+}
+
+.search-button {
+  width: $search-button-width;
+}
+
+.btn-sort {
+  cursor: $btn-sort-cursor;
+  &:hover {
+    color: $btn-sort-hover-color;
+  }
+  
+}

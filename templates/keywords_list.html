@@ -1,0 +1,30 @@
+<div class="container mt-5">
+    <table id="keywords" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Keyword</th>
+                <th>Date Uploaded</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .keywords}}
+            <tr>
+                <td>{{.Keyword}}</td>
+                <td>{{.UploadedAt}}</td>
+                <td><a href="/keywords/{{.ResultID}}">View Results</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+       <!--  <tfoot>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+            </tr>
+        </tfoot>-->
+    </table>
+    </div>

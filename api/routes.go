@@ -11,5 +11,6 @@ func (server *Server) publicRoutes(g *gin.RouterGroup) {
 }
 
 func (server *Server) privateRoutes(g *gin.RouterGroup) {
+	g.GET("/keywords", server.getKeywords)
 
 }

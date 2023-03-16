@@ -1,0 +1,30 @@
+body {
+  background-color: #f7f7f7;
+  font-family: Arial, sans-serif;
+}
+
+.table-responsive {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.search-form {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 300px;
+}
+
+.search-button {
+  width: 80px;
+}
+
+.btn-sort {
+  cursor: pointer;
+}
+.btn-sort:hover {
+  color: #007bff;
+}
+
+/*# sourceMappingURL=keyword.css.map */
