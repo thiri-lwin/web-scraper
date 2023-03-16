@@ -93,6 +93,43 @@ func TestLoginUser(t *testing.T) {
 
 }
 
+func TestLogoutHandler(t *testing.T) {
+
+	testCases := []struct {
+		name          string
+		data          string
+		checkResponse func(recoder *httptest.ResponseRecorder)
+	}{
+		{
+			name: "OK",
+			data: "test123",
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusFound, recorder.Code)
+			},
+		},
+		{
+			name: "UserNotLoggedIn",
+			data: "",
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.NotEqual(t, http.StatusFound, recorder.Code)
+			},
+		},
+	}
+
+	for i := range testCases {
+		tc := testCases[i]
+		t.Run(tc.name, func(t *testing.T) {
+			server := newTestServer(testDB)
+			recorder := httptest.NewRecorder()
+			http.SetCookie(recorder, &http.Cookie{Name: util.Userkey, Value: tc.data})
+			req, _ := http.NewRequest("GET", "/logout", nil)
+			req.Header = http.Header{"Cookie": recorder.HeaderMap["Set-Cookie"]}
+			server.router.ServeHTTP(recorder, req)
+			tc.checkResponse(recorder)
+		})
+	}
+}
+
 func createUserTest(t *testing.T) url.Values {
 	data := getCreateUserPostPayload()
 

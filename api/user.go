@@ -110,3 +110,16 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	ctx.Redirect(http.StatusMovedPermanently, "/keywords")
 
 }
+
+func (server *Server) logoutHandler(ctx *gin.Context) {
+	user, err := ctx.Cookie(util.Userkey)
+
+	log.Println("logging out user:", user)
+	if err != nil {
+		log.Println("Invalid session token")
+		return
+	}
+	ctx.SetCookie(util.Userkey, "", -1, "", "", false, true)
+
+	ctx.Redirect(http.StatusFound, "/")
+}

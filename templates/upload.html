@@ -1,0 +1,20 @@
+{{ template "header.html" .}}
+<div class="container mt-5">
+    <div class="container">
+      <div class="card">
+        <div class="card-body">
+          <form method="post" action="upload" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="csvfile">Select a CSV file to upload Search Keywords:</label>
+              <input type="file" class="form-control-file" id="csvfile" name="csvfile" accept=".csv">
+            </div>
+            <button type="submit" class="btn btn-primary">Upload CSV</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {{if .keywords}}
+      {{ template "keywords_list.html" .}}
+    {{end}}
+</div>
+{{ template "footer.html" .}}
