@@ -1,6 +1,8 @@
 package api
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -38,12 +40,34 @@ func (server *Server) InitRoutes() {
 	router.Static(server.cssPath, "./"+server.cssPath)
 	router.Use(sessions.Sessions("session", cookie.NewStore(util.Secret)))
 
-	router.GET("/", server.initPage)
-	router.GET("/signup", server.signUpGetHandler)
+	public := router.Group("/")
+	server.publicRoutes(public)
+
+	private := router.Group("/")
+	private.Use(authRequired)
+	server.privateRoutes(private)
 	server.router = router
 }
 
 func (server *Server) initPage(c *gin.Context) {
+	// session := sessions.Default(c)
+	// userEmail := session.Get(util.Userkey)
+
+	userEmail, err := c.Cookie(util.Userkey)
+	if err != nil {
+		log.Println("failed to get cookie:", err)
+		renderHTML(c, gin.H{"title": "Sign In"}, "index.html", http.StatusOK)
+		return
+	}
+
+	if userEmail != "" {
+		dbUser, err := server.store.GetUser(c, fmt.Sprint(userEmail))
+		if err == nil && dbUser.Email != "" {
+			renderHTML(c, gin.H{"username": fmt.Sprintf("%s %s", dbUser.FirstName, dbUser.LastName)}, "upload.html", http.StatusOK)
+			return
+		}
+	}
+
 	renderHTML(c, gin.H{"title": "Sign In"}, "index.html", http.StatusOK)
 }
 
