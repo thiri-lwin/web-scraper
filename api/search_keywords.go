@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -80,66 +81,68 @@ func (server *Server) uploadKeywords(ctx *gin.Context) {
 		return
 	}
 
-	// Create a new collector instance
-	c := colly.NewCollector()
-
-	// Set user agent to avoid being detected as a bot
-	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
-
 	// assume no header and all records are keywords that need to search
 	resultCh := make(chan SearchInfo)
+	var wg sync.WaitGroup
 	for _, line := range records {
 		for _, keyword := range line {
 			keyword = strings.TrimSpace(keyword)
 			if keyword == "" {
 				continue
 			}
-			go searchKeyword(c, keyword, resultCh)
+			wg.Add(1)
+			go searchKeyword(keyword, resultCh, &wg)
 		}
 	}
 
+	go func() {
+		wg.Wait()
+		close(resultCh)
+	}()
+
 	var allResults []SearchInfo
 	var res []keywordResponse
-	for _, line := range records {
-		for _, keyword := range line {
-			if strings.TrimSpace(keyword) != "" {
 
-				result := <-resultCh
+	for result := range resultCh {
+		allResults = append(allResults, result)
 
-				allResults = append(allResults, result)
-
-				// store results in db
-				dbRes := resultDB{
-					HTMLCode:           result.HTMLCode,
-					NumAds:             result.NumAds,
-					NumLinks:           result.NumLinks,
-					TotalSearchResults: result.TotalSearchResults,
-				}
-				data, _ := json.Marshal(dbRes)
-				insertedRes, err := server.store.InsertSearchResult(ctx, db.SearchResult{
-					UserID:  dbUser.ID,
-					Keyword: result.Keyword,
-					Results: string(data),
-				})
-				if err != nil {
-					log.Println("Failed to save result in db:", err)
-				}
-				res = append(res, keywordResponse{
-					Keyword:    result.Keyword,
-					UploadedAt: insertedRes.CreatedAt,
-					ResultID:   insertedRes.ID,
-				})
-			}
+		// store results in db
+		dbRes := resultDB{
+			HTMLCode:           result.HTMLCode,
+			NumAds:             result.NumAds,
+			NumLinks:           result.NumLinks,
+			TotalSearchResults: result.TotalSearchResults,
 		}
+		data, _ := json.Marshal(dbRes)
+		insertedRes, err := server.store.InsertSearchResult(ctx, db.SearchResult{
+			UserID:  dbUser.ID,
+			Keyword: result.Keyword,
+			Results: string(data),
+		})
+		if err != nil {
+			log.Println("Failed to save result in db:", err)
+		}
+		res = append(res, keywordResponse{
+			Keyword:    result.Keyword,
+			UploadedAt: insertedRes.CreatedAt,
+			ResultID:   insertedRes.ID,
+		})
 	}
 
 	fmt.Println("len of all results:", len(allResults))
 	renderHTML(ctx, gin.H{"title": "Upload", "keywords": res, "username": fmt.Sprintf("%s %s", dbUser.FirstName, dbUser.LastName), "keyword_page": true}, "upload.html", http.StatusOK)
 }
 
-func searchKeyword(c *colly.Collector, keyword string, resultCh chan SearchInfo) {
+func searchKeyword(keyword string, resultCh chan SearchInfo, wg *sync.WaitGroup) {
 	// fmt.Println("Keyword:", keyword)
-	// Store the results in a slice of maps
+	defer (*wg).Done()
+
+	// Create a new collector instance
+	c := colly.NewCollector()
+
+	// Set user agent to avoid being detected as a bot
+	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+
 	var results SearchInfo
 	results.Keyword = keyword
 	keyword = strings.ReplaceAll(keyword, " ", "+")
