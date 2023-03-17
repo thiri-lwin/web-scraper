@@ -23,7 +23,22 @@
           <pre id="htmlCode">{{.payload.HTMLCode}}</pre>
         </div>
         <p></p>
-        <button type="button" class="btn btn-light" onclick="copyText()">Copy</button>
+        <button type="button" class="btn btn-light" onclick="copyText()">Copy Source Code</button>
+
+       <!-- Button to open the modal -->
+      <button type="button" class="btn btn-light" onclick="openModal()">View Page</button>
+
+      <!-- The Modal -->
+      <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-body">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <div class="modal-content" id="modal-content">
+          </div>
+        </div>
+
+      </div>
 
       </div>
     </div>
