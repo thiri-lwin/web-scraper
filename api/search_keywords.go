@@ -80,6 +80,12 @@ func (server *Server) uploadKeywords(ctx *gin.Context) {
 		return
 	}
 
+	if len(records[0])*len(records) > 100 {
+		log.Println("exceeded the number of records limit")
+		renderHTML(ctx, gin.H{"title": "Upload", "username": fmt.Sprintf("%s %s", dbUser.FirstName, dbUser.LastName), "exceed_limit": true}, "upload.html", http.StatusBadRequest)
+		return
+	}
+
 	// Create a new collector instance
 	c := colly.NewCollector()
 
