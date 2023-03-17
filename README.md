@@ -9,7 +9,12 @@ The server port and database configuration can be modified in the `app.env` file
 Note that changing the database configuration may require additional changes to the Makefile.
 
 ### Setup infrastructure
+- Start postgres container:
 
+    ```bash
+    make postgres
+    ```
+    
 - Create web_scraper database:
 
     ```bash

@@ -1,3 +1,7 @@
+
+postgres:
+	docker run --name postgresdb -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -d postgres:14-alpine
+
 createdb:
 	docker exec -it postgresdb createdb --username=postgres --owner=postgres web_scraper
 	
@@ -16,4 +20,4 @@ server:
 serverdocker:
 	docker-compose build && docker-compose up
 
-.PHONY: createdb migrateup migratedown test server serverdocker
+.PHONY: createdb migrateup migratedown test server serverdocker postgres
