@@ -4,6 +4,7 @@
             <tr>
                 <th>Keyword</th>
                 <th>Date Uploaded</th>
+                <th>Status</th>
                 <th>Details</th>
             </tr>
         </thead>
@@ -12,6 +13,7 @@
             <tr>
                 <td>{{.Keyword}}</td>
                 <td>{{.UploadedAt}}</td>
+                <td>{{.Status}}</td>
                 <td><a href="/keywords/{{.ResultID}}">View Results</a></td>
             </tr>
             {{end}}

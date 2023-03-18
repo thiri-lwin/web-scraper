@@ -11,6 +11,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/thiri-lwin/web_scraper/db"
+	"github.com/thiri-lwin/web_scraper/util"
 )
 
 var testDB *db.Store
@@ -31,7 +32,8 @@ func newTestServer(store *db.Store) *Server {
 	templatePath := "../templates/*.html"
 	assetsPath := "../assets"
 	cssPath := "../templates/css"
-	server := NewServer(store, templatePath, assetsPath, cssPath)
+	keywordChan := make(chan util.UploadedFile)
+	server := NewServer(store, keywordChan, templatePath, assetsPath, cssPath)
 	return server
 }
 
