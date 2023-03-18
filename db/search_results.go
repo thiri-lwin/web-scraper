@@ -10,6 +10,7 @@ type SearchResult struct {
 	UserID    int       `db:"user_id"`
 	Keyword   string    `db:"keyword"`
 	Results   string    `db:"results"`
+	Status    string    `db:"status"`
 	CreatedAt time.Time `db:"created_at"`
 }
 
@@ -19,10 +20,12 @@ func (s *Store) InsertSearchResult(ctx context.Context, arg SearchResult) (Searc
 	INSERT INTO search_results (
 		user_id,
 		keyword,
+		status,
 		results)
 	VALUES (
 		:user_id, 
 		:keyword, 
+		:status,
 		:results
 	) 
 	RETURNING *`)
@@ -40,7 +43,7 @@ func (s *Store) InsertSearchResult(ctx context.Context, arg SearchResult) (Searc
 func (s *Store) GetSearchResultsByUserID(ctx context.Context, userID int) ([]SearchResult, error) {
 	data := make([]SearchResult, 0)
 	if err := s.db.Select(&data, `
-	SELECT id, keyword, created_at from search_results
+	SELECT id, keyword, status, created_at from search_results
 	WHERE user_id = $1`, userID); err != nil {
 		return []SearchResult{}, err
 	}
