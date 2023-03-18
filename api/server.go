@@ -15,14 +15,21 @@ import (
 type Server struct {
 	store        *db.Store
 	router       *gin.Engine
+	keywordCh    chan util.UploadedFile
 	templatePath string
 	assetsPath   string
 	cssPath      string
 }
 
 // NewServer creates a new HTTP server and setup routing
-func NewServer(store *db.Store, templatePath, assetsPath, cssPath string) *Server {
-	server := &Server{store: store, templatePath: templatePath, assetsPath: assetsPath, cssPath: cssPath}
+func NewServer(store *db.Store, keywordCh chan util.UploadedFile, templatePath, assetsPath, cssPath string) *Server {
+	server := &Server{
+		store:        store,
+		keywordCh:    keywordCh,
+		templatePath: templatePath,
+		assetsPath:   assetsPath,
+		cssPath:      cssPath,
+	}
 
 	// set routes
 	server.InitRoutes()
