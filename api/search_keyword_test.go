@@ -2,11 +2,13 @@ package api
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,7 +19,10 @@ import (
 )
 
 func TestUploadKeywords(t *testing.T) {
+	testUploadKeywords(t)
+}
 
+func testUploadKeywords(t *testing.T) url.Values {
 	filename := "test/sample_success.csv"
 	file, err := os.Open(filename)
 	if err != nil {
@@ -50,6 +55,10 @@ func TestUploadKeywords(t *testing.T) {
 			body: body,
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
+
+				p, err := ioutil.ReadAll(recorder.Body)
+				pageOK := err == nil && strings.Index(string(p), "<title>Upload</title>") > 0 && strings.Index(string(p), "Scarping has started! Please see detailed results in View Keywords.") > 0 && strings.Index(string(p), fmt.Sprintf("%s %s", user.Get("first_name"), user.Get("last_name"))) > 0
+				require.Equal(t, true, pageOK)
 			},
 		},
 		{
@@ -80,7 +89,7 @@ func TestUploadKeywords(t *testing.T) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
 
 				p, err := ioutil.ReadAll(recorder.Body)
-				pageOK := err == nil && strings.Index(string(p), "<title>Upload</title>") > 0
+				pageOK := err == nil && strings.Index(string(p), "<title>Upload</title>") > 0 && strings.Index(string(p), fmt.Sprintf("%s %s", user.Get("first_name"), user.Get("last_name"))) > 0
 				require.Equal(t, true, pageOK)
 			},
 		},
@@ -106,6 +115,8 @@ func TestUploadKeywords(t *testing.T) {
 			tc.checkResponse(recorder)
 		})
 	}
+
+	return user
 }
 
 func TestUploadGetHandler(t *testing.T) {
@@ -121,7 +132,7 @@ func TestUploadGetHandler(t *testing.T) {
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
 				p, err := ioutil.ReadAll(recorder.Body)
-				pageOK := err == nil && strings.Index(string(p), "<title>Upload</title>") > 0
+				pageOK := err == nil && strings.Index(string(p), "<title>Upload</title>") > 0 && strings.Index(string(p), fmt.Sprintf("%s %s", user.Get("first_name"), user.Get("last_name"))) > 0
 				require.Equal(t, true, pageOK)
 			},
 		},
@@ -179,7 +190,7 @@ func TestGetKeywords(t *testing.T) {
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
 				p, err := ioutil.ReadAll(recorder.Body)
-				pageOK := err == nil && strings.Index(string(p), "<title>Keyword List</title>") > 0
+				pageOK := err == nil && strings.Index(string(p), "<title>Keyword List</title>") > 0 && strings.Index(string(p), fmt.Sprintf("%s %s", user.Get("first_name"), user.Get("last_name"))) > 0
 				require.Equal(t, true, pageOK)
 			},
 		},
